@@ -25,19 +25,21 @@ for line in file:
         location_log = 'From location: ' + info['location']
         print(location_log)
 
-        client.connect(info['ip'], username='admin', password='admin', port=22, timeout=5)
+        client.connect(info['ip'], username='cisco', password='', timeout=5)
 
     try:
         connector()
         channel = client.invoke_shell()
-        channel.send('conf t\n')
-        channel.send('hostname Router\n')
+        #channel.send('conf t\n')
+        #channel.send('int fa0/0\n')
+        #channel.send('description TEST_1\n')
+        channel.send('wr\n')
         time.sleep(1)
         print('Done!\n')
 
     except Exception as e:
         error_log = str(e)
-    print('error_log' + '\n')
+        print (error_log + '\n')
 
 file.close()
 
