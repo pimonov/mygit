@@ -3,27 +3,29 @@ import sys
 import telnetlib
 import time
 
-HOST = input("Enter hostname: ")
-user = input("Enter your remote account: ")
-password = "cisco"
+HOST = '192.168.0.110'
+user = 'admino'
+password = "admino"
 
 tn = telnetlib.Telnet(HOST)
 tn.read_until(b"Username: " ,3)
-tn.write(user + "\n")
+tn.write(user.encode('ascii') + b"\n")
 if password:
     tn.read_until(b"Password: ",3)
-    tn.write(password + b"\n")
+    tn.write(password.encode('ascii') + b"\n")
 
-commands=["terminal length 0\n","show ip int br\n","show ip nat trans\n", \
-"show run\n","show bgp ipv4 unicast summary\n","show bgp ipv6 unicast summary\n", \
-"show pim neighbor\n","show mfib route summary\n","show platform\n","show redundancy\n", "show lacp\n"]
+commands=["terminal length 0\n","show ip int br\n"]
 
 for command in commands:
-	tn.write(command)
+    tn.write(command.encode('ascii'))
 
-tn.write("exit\n")
+tn.write(b"exit\n")
 
-filename = str(HOST) + "_" +time.strftime("%X")
-with open( filename, "w") as out:
-	out.write( tn.read_all())
+filename = str(HOST)
+
+def write_in_file(lastpost):
+    lastpost = tn.read_until(b'R#', timeout=2).decode('ascii')
+    with open(filename, "w") as file:
+        file.write(lastpost)
+        tn.close()
 
